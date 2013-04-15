@@ -20,16 +20,13 @@ data GameState = GameState {
 }
 
         
-run :: GameState -> IO ()
-run game = do
+test :: GameState -> IO ()
+test game = do
             showBoard game
             putStrLn "Next Generation?"
             getChar
-            let GameState newAlives rate = crank game
-            run (GameState newAlives rate)
-            return ()
-
-         
+            let next = crank game
+            test next
         
 
 initialGameState :: GameState
@@ -81,3 +78,13 @@ neighbours (Coord x y) =
 
 resurrect :: Coord -> GameState -> GameState
 resurrect (cell) (GameState alives rate) = GameState (cell : alives) rate 
+
+kill :: Coord -> GameState -> GameState
+kill cell (GameState alives rate) = GameState (delete cell alives) rate
+
+
+b1 :: GameState
+b1 = GameState cross 1
+    where 
+        cross = [Coord x y | x <- [0..boardWidth], y <- [0..boardWidth], 
+                    x == y || x == boardWidth-y]
